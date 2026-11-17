@@ -12,6 +12,14 @@ type Tour = {
   alt: string;
   accent: string;
   details: { label: string; value: string }[];
+  comparison: {
+    vibe: string;
+    climate: string;
+    range: number;
+    intensity: number;
+    intensityLabel: string;
+    highlight: string;
+  };
 };
 
 const tours: Tour[] = [
@@ -29,9 +37,18 @@ const tours: Tour[] = [
     accent: "aqua",
     details: [
       { label: "Best for", value: "Beach lovers & first-time travelers" },
-      { label: "Signature", value: "Yacht cruise & coral snorkeling" },
-      { label: "Stay", value: "Private coastal hideaway" },
+      { label: "Weather", value: "Warm & sunny · 26–30°C" },
+      { label: "Highlight", value: "Yacht cruise & coral snorkeling" },
+      { label: "Stay / pace", value: "Coastal hotel · Easygoing" },
     ],
+    comparison: {
+      vibe: "Coastal & Relax",
+      climate: "28°C Warm",
+      range: 78,
+      intensity: 1,
+      intensityLabel: "Easy",
+      highlight: "Sunset Yacht & Snorkeling",
+    },
   },
   {
     id: "forest",
@@ -47,9 +64,18 @@ const tours: Tour[] = [
     accent: "moss",
     details: [
       { label: "Best for", value: "Nature explorers & keen hikers" },
-      { label: "Signature", value: "Waterfalls & canopy trails" },
-      { label: "Stay", value: "Elevated woodland lodge" },
+      { label: "Weather", value: "Cool & misty · 16–22°C" },
+      { label: "Highlight", value: "Waterfalls & canopy trails" },
+      { label: "Stay / pace", value: "Luxury tents · Moderate" },
     ],
+    comparison: {
+      vibe: "Deep Nature Trek",
+      climate: "18°C Crisp",
+      range: 55,
+      intensity: 2,
+      intensityLabel: "Moderate",
+      highlight: "Waterfall & Canopy Camping",
+    },
   },
   {
     id: "snow",
@@ -65,11 +91,135 @@ const tours: Tour[] = [
     accent: "ice",
     details: [
       { label: "Best for", value: "Snow sports & quiet luxury" },
-      { label: "Signature", value: "Alpine skiing & fireside dining" },
-      { label: "Stay", value: "Boutique mountain chalet" },
+      { label: "Weather", value: "Crisp & snowy · −4–2°C" },
+      { label: "Highlight", value: "Alpine skiing & fireside dining" },
+      { label: "Stay / pace", value: "Alpine chalet · Easy-guided" },
     ],
+    comparison: {
+      vibe: "Alpine Snow Thrill",
+      climate: "−4°C Sub-Zero",
+      range: 20,
+      intensity: 1,
+      intensityLabel: "Guided Easy",
+      highlight: "Alpine Skiing & Bonfire",
+    },
   },
 ];
+
+function MetricIcon({ type }: { type: "vibe" | "climate" | "highlight" }) {
+  if (type === "climate") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14 14.76V5a2 2 0 0 0-4 0v9.76a4.5 4.5 0 1 0 4 0Z" />
+        <path d="M12 9v8" />
+      </svg>
+    );
+  }
+
+  if (type === "highlight") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="7" />
+        <path d="m15 9-2 4-4 2 2-4 4-2Z" />
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21s7-5.1 7-12a7 7 0 0 0-14 0c0 6.9 7 12 7 12Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </svg>
+  );
+}
+
+function ComparisonPanel() {
+  return (
+    <section className="comparison-panel" aria-labelledby="comparison-heading">
+      <div className="comparison-panel__heading">
+        <p>Side-by-side guide</p>
+        <h2 id="comparison-heading">Find your kind of adventure.</h2>
+      </div>
+
+      <div className="comparison-grid">
+        {tours.map((tour) => (
+          <article className={`comparison-column comparison-column--${tour.accent}`} key={tour.id}>
+            <div className="comparison-column__title">
+              <span>0{tours.indexOf(tour) + 1}</span>
+              <h3>{tour.title}</h3>
+            </div>
+
+            <div className="comparison-metric">
+              <span className="comparison-metric__icon">
+                <MetricIcon type="vibe" />
+              </span>
+              <div>
+                <p>Best vibe</p>
+                <strong className="vibe-tag">{tour.comparison.vibe}</strong>
+              </div>
+            </div>
+
+            <div className="comparison-metric">
+              <span className="comparison-metric__icon">
+                <MetricIcon type="climate" />
+              </span>
+              <div className="comparison-metric__content">
+                <p>Climate & temperature</p>
+                <strong>{tour.comparison.climate}</strong>
+                <span className="temperature-bar" aria-hidden="true">
+                  <i style={{ width: `${tour.comparison.range}%` }} />
+                </span>
+              </div>
+            </div>
+
+            <div className="comparison-metric">
+              <span className="comparison-metric__number" aria-hidden="true">
+                {tour.comparison.intensity}/3
+              </span>
+              <div className="comparison-metric__content">
+                <p>Physical intensity</p>
+                <strong>{tour.comparison.intensityLabel}</strong>
+                <span
+                  className="intensity-meter"
+                  aria-label={`${tour.comparison.intensity} out of 3 intensity`}
+                >
+                  {[1, 2, 3].map((level) => (
+                    <i
+                      className={level <= tour.comparison.intensity ? "is-active" : ""}
+                      key={level}
+                    />
+                  ))}
+                </span>
+              </div>
+            </div>
+
+            <div className="comparison-metric">
+              <span className="comparison-metric__icon">
+                <MetricIcon type="highlight" />
+              </span>
+              <div>
+                <p>Key highlight</p>
+                <strong>{tour.comparison.highlight}</strong>
+              </div>
+            </div>
+
+            <a className="comparison-book" href={`#book-${tour.id}`}>
+              <span>Book now</span>
+              <small>${tour.price} per person</small>
+              <b aria-hidden="true">↗</b>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <a className="comparison-discover" href="#all-tours">
+        Discover all tours
+        <span aria-hidden="true">↗</span>
+      </a>
+    </section>
+  );
+}
 
 function TourCard({ tour, compact }: { tour: Tour; compact: boolean }) {
   const cardRef = useRef<HTMLElement>(null);
@@ -151,21 +301,11 @@ function TourCard({ tour, compact }: { tour: Tour; compact: boolean }) {
         </div>
 
         <div className="tour-card__compact">
-          <div>
-            <span>{tour.eyebrow}</span>
-            <h2>{tour.title}</h2>
-            <p>
-              {tour.duration} · {tour.group}
-            </p>
-          </div>
+          <h2>{tour.title}</h2>
           <div className="tour-card__compact-price">
-            <span>From</span>
+            <span>Trip price</span>
             <strong>${tour.price}</strong>
           </div>
-          <a href={`#book-${tour.id}`} aria-label={`Book ${tour.title}`}>
-            <span>View journey</span>
-            <span aria-hidden="true">↗</span>
-          </a>
         </div>
       </div>
     </article>
@@ -202,28 +342,53 @@ export default function App() {
               type="button"
               onClick={() => setCompact((current) => !current)}
               aria-pressed={compact}
+              aria-controls="tours-container"
             >
               <span className="view-toggle__icon" aria-hidden="true">
                 <i />
                 <i />
               </span>
-              {compact ? "Show immersive view" : "Show compact view"}
+              {compact ? "Expand to full details (520px)" : "Compare prices (100px)"}
             </button>
           </div>
         </header>
 
-        <div className={`tours-grid${compact ? " is-compact" : ""}`}>
+        <div
+          className={`tours-grid${compact ? " is-compact" : ""}`}
+          id="tours-container"
+          aria-live="polite"
+        >
           {tours.map((tour) => (
             <TourCard key={tour.id} tour={tour} compact={compact} />
           ))}
         </div>
 
-        <footer className="section-footer">
-          <p>
-            <span>03</span> signature journeys
-          </p>
-          <a href="#all-tours">
-            Discover all journeys
+        {compact && <ComparisonPanel />}
+
+        <footer className={`booking-actions${compact ? " is-hidden" : ""}`}>
+          <div className="booking-actions__intro">
+            <p>
+              <span>03</span> signature journeys
+            </p>
+            <h2>Ready when you are.</h2>
+          </div>
+          <div className="booking-actions__buttons">
+            {tours.map((tour) => (
+              <a
+                key={tour.id}
+                className={`booking-button booking-button--${tour.accent}`}
+                href={`#book-${tour.id}`}
+              >
+                <span>
+                  Book {tour.title.replace("The ", "")}
+                  <small>${tour.price} per person</small>
+                </span>
+                <b aria-hidden="true">↗</b>
+              </a>
+            ))}
+          </div>
+          <a className="discover-link" href="#all-tours">
+            Discover all tours
             <span aria-hidden="true">↗</span>
           </a>
         </footer>
