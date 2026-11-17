@@ -1,0 +1,10 @@
+{
+  "description": "Explore and compare coastal, forest, and snow tours with interactive 3D cards, clear pricing, trip details, and quick booking links.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
